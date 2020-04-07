@@ -1,7 +1,7 @@
-# Connect Onboarding for Standard accounts
+# Connect destination charges
 
 This Stripe sample shows you how to process a Connect [destination charge](https://stripe.com/docs/connect/destination-charges) using Stripe elements.
-Before using this sample, you should have onboarded at least one Connect account. For more about onboarding accounts and making Connect charges, use our [step-by-step Connect guide](https://stripe.com/docs/connect/collect-then-transfer-guide#accept-payment).
+Before using this sample, you should have onboarded at least one Connect account. For more about onboarding accounts and making Connect charges, read our [step-by-step Connect guide](https://stripe.com/docs/connect/collect-then-transfer-guide#accept-payment).
 
 Demo url: TODO
 
@@ -43,11 +43,12 @@ Copy the .env.example file into a file named .env in the folder of the server yo
 cp .env.example server/node/.env
 ```
 
-You will need a Stripe account in order to run the demo. Once you set up your account, go to the Stripe [developer dashboard](https://stripe.com/docs/development#api-keys) to find your API keys.
+You will need a Stripe account in order to run the demo. Once you set up your account, go to the Stripe [developer dashboard](https://stripe.com/docs/development#api-keys) to find your API keys and to your [Connect settings](https://dashboard.stripe.com/settings/applications) to find your client application ID.
 
 ```
 STRIPE_PUBLISHABLE_KEY=<replace-with-your-publishable-key>
 STRIPE_SECRET_KEY=<replace-with-your-secret-key>
+STRIPE_CLIENT_ID=<replace-with-your-client-application-id>
 ```
 
 `STATIC_DIR` tells the server where to the client files are located and does not need to be modified unless you move the server files.
