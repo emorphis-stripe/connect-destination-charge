@@ -68,8 +68,6 @@ var setupElements = function(data) {
     // Initiate payment when the submit button is clicked
     pay(stripe, card, paymentIntentClientSecret);
   });
-
-  elementsSetUp = true;
 };
 
 /*

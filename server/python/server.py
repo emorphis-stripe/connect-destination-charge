@@ -45,7 +45,7 @@ def calculate_order_amount(items):
 def create_payment():
     data = json.loads(request.data)
     print(data)
-    # Create a PaymentIntent with the order amount and currency
+    # Create a PaymentIntent with the order amount, currency, and transfer destination
     intent = stripe.PaymentIntent.create(
         amount=calculate_order_amount(data['items']),
         currency=data['currency'],
