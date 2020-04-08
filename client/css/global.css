@@ -286,7 +286,7 @@ button:disabled {
   cursor: none;
 }
 
-.sr-payment-form button,
+button,
 .fullwidth {
   width: 100%;
 }

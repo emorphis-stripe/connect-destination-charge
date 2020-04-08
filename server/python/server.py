@@ -13,7 +13,7 @@ import string
 
 import stripe
 from dotenv import load_dotenv, find_dotenv
-from flask import Flask, jsonify, render_template, redirect, request, session, send_from_directory
+from flask import Flask, jsonify, render_template, redirect, request, session, send_from_directory, Response
 import urllib
 
 # Setup Stripe python client library
@@ -71,6 +71,38 @@ def get_express_dashboard_link():
     link = stripe.Account.create_login_link(account_id, redirect_url=(request.url_root))
     print(request.url_root)
     return jsonify({'url': link.url})
+
+
+@app.route("/webhook", methods=["POST"])
+def webhook_received():
+  payload = request.get_data()
+  signature = request.headers.get("stripe-signature")
+
+  # Verify webhook signature and extract the event.
+  # See https://stripe.com/docs/webhooks/signatures for more information.
+  try:
+    event = stripe.Webhook.construct_event(
+        payload=payload, sig_header=signature, secret=os.getenv('STRIPE_WEBHOOK_SECRET')
+    )
+  except ValueError as e:
+    # Invalid payload.
+    print(e)
+    return Response(status=400)
+  except stripe.error.SignatureVerificationError as e:
+    # Invalid Signature.
+    print(e, signature, os.getenv('STRIPE_WEBHOOK_SECRET'), payload)
+    return Response(status=400)
+
+  if event["type"] == "payment_intent.succeeded":
+    payment_intent = event["data"]["object"]
+    handle_successful_payment_intent(payment_intent)
+
+  return json.dumps({"success": True}), 200
+
+
+def handle_successful_payment_intent(payment_intent):
+  # Fulfill the purchase.
+  print('PaymentIntent: ' + str(payment_intent))
 
 
 if __name__== '__main__':

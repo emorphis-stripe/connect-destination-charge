@@ -4,10 +4,10 @@ var paymentIntentData = {
   currency: "usd"
 };
 
-// Secret from the server, which we'll overwrite each time we create a new payment intent
+// Secret from the server, which we'll overwrite each time we create a new payment intent.
 var paymentIntentClientSecret = null;
 
-// When the selected account changes, create a new PaymentIntent
+// When the selected account changes, create a new PaymentIntent.
 var enabledAccounts = document.querySelector("#enabled-accounts-select")
 enabledAccounts.addEventListener("change", function(event) {
 	updatePaymentIntent(enabledAccounts.value);
@@ -141,7 +141,10 @@ var changeLoadingState = function(isLoading) {
 
 /* ------- Account list ------- */
 
-// Fetch 10 most recent accounts from the server
+// Fetch 10 most recent accounts from the server. We'll display one of three states in the UI, depending on the
+// accounts list; (1) if you haven't created any accounts, we'll re-direct you to the onboarding guide, (2) if none of
+// of your accounts have charges enabled, we'll display instructions on how to finish the onboarding process, (3)
+// otherwise, we'll display a payment form, as a customer might see it.
 fetch("/recent-accounts", {
     method: "GET",
     headers: {
@@ -154,7 +157,7 @@ fetch("/recent-accounts", {
 
     var accounts = data.accounts.data;
 
-    // If there are no accounts, display a message pointing to an onboarding guide
+    // If there are no accounts, display a message pointing to an onboarding guide.
     if (!accounts.length) {
       document.querySelector("#no-accounts-section").classList.remove("hidden");
       return;
@@ -162,7 +165,9 @@ fetch("/recent-accounts", {
 
     var enabledAccounts = accounts.filter((acct) => acct.charges_enabled);
 
-    // If no accounts are enabled, display instructions on how to enable an account
+    // If no accounts are enabled, display instructions on how to enable an account. In an actual
+    // application, you should only surface Express dashboard links to your connected account owners,
+    // not to their customers.
     if (!enabledAccounts.length) {
       var expressAccounts = accounts.filter((acct) => acct.type == 'express');
       var hasCustom = !!accounts.filter((acct) => acct.type == 'custom');
@@ -190,7 +195,7 @@ fetch("/recent-accounts", {
       return;
     } 
 
-    // If at least one account is enabled, show the account selector and payment form
+    // If at least one account is enabled, show the account selector and payment form.
     var wrapper = document.querySelector("#enabled-accounts-section");
     var input = document.querySelector("#enabled-accounts-select");
     enabledAccounts.forEach((acct) => {
@@ -205,6 +210,11 @@ fetch("/recent-accounts", {
   });
 
 
+/* ------- Express dashboard ------- */
+
+// When no accounts are enabled, this sample provides a way to log in as
+// an Express account to finish the onboarding process. Here, we set up
+// the event handler to construct the Express dashboard link.
 expressDashboardForm = document.querySelector('#disabled-accounts-form');
 expressDashboardForm.addEventListener(
   "submit",
