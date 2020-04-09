@@ -41,15 +41,21 @@ def calculate_order_amount(items):
     return 1400
 
 
+def calculate_application_fee_amount(amount):
+    return int(.1 * amount)
+
+
 @app.route('/create-payment-intent', methods=['POST'])
 def create_payment():
     data = json.loads(request.data)
-    print(data)
+    amount = calculate_order_amount(data['items'])
+
     # Create a PaymentIntent with the order amount, currency, and transfer destination
     intent = stripe.PaymentIntent.create(
-        amount=calculate_order_amount(data['items']),
+        amount=amount,
         currency=data['currency'],
-        transfer_data={'destination': data['account']}
+        transfer_data={'destination': data['account']},
+        application_fee_amount=calculate_application_fee_amount(amount)
     )
 
     try:
@@ -69,7 +75,6 @@ def get_accounts():
 def get_express_dashboard_link():
     account_id = request.args.get('account_id')
     link = stripe.Account.create_login_link(account_id, redirect_url=(request.url_root))
-    print(request.url_root)
     return jsonify({'url': link.url})
 
 
