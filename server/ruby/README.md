@@ -1,4 +1,4 @@
-# Name of sample
+# Connect destination charges
 
 A [Sinatra](http://sinatrarb.com/) implementation.
 
