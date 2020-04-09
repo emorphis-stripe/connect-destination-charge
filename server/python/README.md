@@ -1,6 +1,6 @@
-# Name of sample
+# Connect destination charges
 
-## Requirements## Requirements
+## Requirements
 
 - Python 3
 - [Configured .env file](../README.md)
