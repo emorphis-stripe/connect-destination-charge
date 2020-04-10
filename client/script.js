@@ -1,5 +1,7 @@
 var paymentForm = document.getElementById("payment-form");
 var paymentIntentData = {
+  // You might send a list of items the customer is purchasing so that you can compute
+  // the price on the server.
   items: [{ id: "photo-subscription" }],
   currency: "usd"
 };
@@ -7,39 +9,7 @@ var paymentIntentData = {
 // Secret from the server, which we'll overwrite each time we create a new payment intent.
 var paymentIntentClientSecret = null;
 
-// When the selected account changes, create a new PaymentIntent.
-var enabledAccounts = document.querySelector("#enabled-accounts-select")
-enabledAccounts.addEventListener("change", function(event) {
-	updatePaymentIntent(enabledAccounts.value);
-});
-
-const updatePaymentIntent = (account, shouldSetupElements = false) => {
-  // Disable the button while we fetch the payment intent.
-  paymentForm.querySelector("button").disabled = true;
-
-	paymentIntentData.account = account;
-
-  fetch("/create-payment-intent", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(paymentIntentData)
-  })
-    .then(function(result) {
-      return result.json();
-    })
-    .then(function(data) {
-			paymentIntentClientSecret = data.clientSecret
-			if (shouldSetupElements) {
-				setupElements(data);
-			}
-
-			paymentForm.querySelector("button").disabled = false;
-    });
-}
-  
-  // Set up Stripe.js and Elements to use in checkout form
+// Set up Stripe.js and Elements to use in checkout form
 var setupElements = function(data) {
   stripe = Stripe(data.publishableKey);
   var elements = stripe.elements();
@@ -95,6 +65,41 @@ var pay = function(stripe, card, clientSecret) {
       }
     });
 };
+
+const updatePaymentIntent = (account, shouldSetupElements = false) => {
+  // Disable the button while we fetch the payment intent.
+  paymentForm.querySelector("button").disabled = true;
+
+  // The account will be used as the transfer_data[destination] parameter when creating the
+  // PaymentIntent on the server side.
+	paymentIntentData.account = account;
+
+  fetch("/create-payment-intent", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(paymentIntentData)
+  })
+    .then(function(result) {
+      return result.json();
+    })
+    .then(function(data) {
+			paymentIntentClientSecret = data.clientSecret
+			if (shouldSetupElements) {
+				setupElements(data);
+			}
+
+			paymentForm.querySelector("button").disabled = false;
+    });
+}
+
+// When the selected account changes, create a new PaymentIntent on the server
+// side and update the front-end accordingly.
+var enabledAccounts = document.querySelector("#enabled-accounts-select")
+enabledAccounts.addEventListener("change", function(event) {
+	updatePaymentIntent(enabledAccounts.value);
+});
   
 /* ------- Post-payment helpers ------- */
 
@@ -181,6 +186,8 @@ fetch("/recent-accounts", {
         element.innerHTML = acct.email || acct.id;
         input.appendChild(element)
       });
+      // Remove the hidden CSS class on one of the sections with instruction on how to finish onboarding
+      // for a given account type.
       if (!!expressAccounts) {
         document.querySelector('#disabled-accounts-form').classList.remove("hidden");
         wrapper.querySelector('.express').classList.remove("hidden");
