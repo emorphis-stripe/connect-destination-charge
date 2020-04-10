@@ -1,7 +1,7 @@
 {
-    "name": "stripe-sample-checkout-single-subscription",
+    "name": "stripe-sample-connect-destination-charge",
     "version": "1.0.0",
-    "description": "Subscription page with Checkout",
+    "description": "Accept a payment with destination charges",
     "main": "server.js",
     "scripts": {
       "start": "node server/node/server.js",

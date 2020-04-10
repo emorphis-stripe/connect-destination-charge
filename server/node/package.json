@@ -1,7 +1,7 @@
 {
-  "name": "stripe-sample-connect-onboarding-for-standard",
+  "name": "stripe-sample-connect-destination-charge",
   "version": "1.0.0",
-  "description": "A Stripe demo",
+  "description": "Accept a payment with destination charges",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
